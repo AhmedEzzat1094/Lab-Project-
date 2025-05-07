@@ -20,8 +20,9 @@ An API service that uses machine learning to predict heart disease risk based on
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/heart-disease-prediction-api.git
-   cd heart-disease-prediction-api
+   git clone https://github.com/AhmedEzzat1094/Lab-Project-.git
+   cd Lab-Project-
+   git switch back-end
    ```
 
 2. Create and activate a virtual environment:
