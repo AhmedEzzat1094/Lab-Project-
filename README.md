@@ -238,10 +238,4 @@ The API returns appropriate HTTP status codes and error messages in JSON format:
 
 See `requirements.txt` for the complete list of dependencies.
 
-## License
 
-[MIT License](LICENSE)
-
-## Contact
-
-For questions or support, please contact [your-email@example.com](mailto:your-email@example.com).
