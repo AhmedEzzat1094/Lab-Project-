@@ -1,11 +1,11 @@
 import os
+import pickle
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 import logging
 import logging.handlers
 import pandas as pd
-import joblib
 
 # Load environment variables
 load_dotenv()
@@ -24,10 +24,11 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-# Load the trained model
+# Load the trained model using pickle
 try:
     model_path = os.getenv('MODEL_PATH', 'heart_disease_model.pkl')
-    model = joblib.load(model_path)
+    with open(model_path, 'rb') as model_file:
+        model = pickle.load(model_file)
     logger.info("Model loaded successfully")
 except Exception as e:
     logger.error(f"Failed to load model: {e}")
@@ -122,7 +123,7 @@ def predict():
 
         # Convert to DataFrame for prediction
         try:
-            input_data = pd.DataFrame([[
+            input_data = pd.DataFrame([[ 
                 data['age'], data['sex'], data['chest_pain_type'], data['bp'],
                 data['cholesterol'], data['fbs_over_120'], data['ekg_results'],
                 data['max_hr'], data['exercise_angina'], data['st_depression'],
