@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import logging
 import logging.handlers
 import pandas as pd
+import joblib  # Add this at the top
 
 # Load environment variables
 load_dotenv()
@@ -26,9 +27,11 @@ logger.addHandler(handler)
 
 # Load the trained model using pickle
 try:
-    model_path = os.getenv('MODEL_PATH', 'heart_disease_model.pkl')
-    with open(model_path, 'rb') as model_file:
-        model = pickle.load(model_file)
+    model_path = os.getenv('MODEL_PATH', 'models/heart_disease_model.pkl')
+
+   
+    model = joblib.load(model_path)
+
     logger.info("Model loaded successfully")
 except Exception as e:
     logger.error(f"Failed to load model: {e}")
