@@ -8,7 +8,9 @@ import pandas as pd
 from datetime import datetime
 import os
 from dotenv import load_dotenv
-
+from email_validator import validate_email, EmailNotValidError
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 # Load environment variables
 load_dotenv()
 
@@ -26,7 +28,9 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
 # Load the trained model
-model = joblib.load('models/heart_disease_model.pkl')
+model_path = os.path.join(os.path.dirname(__file__), 'models', 'heart_disease_model.pkl')
+model = joblib.load(model_path)
+
 
 # Database models (same as before)
 class User(db.Model):
@@ -90,8 +94,12 @@ def predict():
     ]], columns=required_fields)
     
     # Make prediction
-    prediction = model.predict(input_data)[0]
-    probability = model.predict_proba(input_data)[0][1]
+    try:
+        prediction = model.predict(input_data)[0]
+        probability = model.predict_proba(input_data)[0][1]
+    except Exception as e:
+        return jsonify({"error": "Model prediction failed", "details": str(e)}), 500
+
     
     # Save prediction to history
     new_prediction = PredictionHistory(
@@ -122,6 +130,137 @@ def predict():
     }), 200
 
 # Other routes (register, login, history) remain the same as in the original code
+@app.route('/history', methods=['GET'])
+@jwt_required()
+def get_history():
+    current_user_id = get_jwt_identity()
+
+    history = PredictionHistory.query.filter_by(user_id=current_user_id).order_by(
+        PredictionHistory.prediction_date.desc()
+    ).all()
+
+    history_data = [{
+        'id': pred.id,
+        'age': pred.age,
+        'sex': pred.sex,
+        'chest_pain_type': pred.chest_pain_type,
+        'bp': pred.bp,
+        'cholesterol': pred.cholesterol,
+        'fbs_over_120': pred.fbs_over_120,
+        'ekg_results': pred.ekg_results,
+        'max_hr': pred.max_hr,
+        'exercise_angina': pred.exercise_angina,
+        'st_depression': pred.st_depression,
+        'slope_of_st': pred.slope_of_st,
+        'number_of_vessels_fluro': pred.number_of_vessels_fluro,
+        'thallium': pred.thallium,
+        'prediction_result': pred.prediction_result,
+        'prediction_date': pred.prediction_date.isoformat()
+    } for pred in history]
+
+    return jsonify({"history": history_data}), 200
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    
+    # Validate input
+    if not data or not data.get('username') or not data.get('password'):
+        return jsonify({"error": "Missing username or password"}), 400
+    
+    # Find user
+    user = User.query.filter_by(username=data['username']).first()
+    if not user or not bcrypt.check_password_hash(user.password, data['password']):
+        return jsonify({"error": "Invalid username or password"}), 401
+    
+    # Create access token
+    access_token = create_access_token(identity=user.id)
+    
+    return jsonify({
+        "message": "Login successful",
+        "access_token": access_token,
+        "user_id": user.id,
+        "username": user.username
+    }), 200
+
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    
+    # Validate input
+    if not data or not data.get('username') or not data.get('email') or not data.get('password'):
+        return jsonify({"error": "Missing required fields"}), 400
+    
+    # Validate email format
+    try:
+        email = validate_email(data['email']).email
+    except EmailNotValidError:
+        return jsonify({"error": "Invalid email format"}), 400
+    
+    # Validate password strength
+    if len(data['password']) < 8:
+        return jsonify({"error": "Password must be at least 8 characters"}), 400
+    
+    # Validate input
+    if not data or not data.get('username') or not data.get('email') or not data.get('password'):
+        return jsonify({"error": "Missing required fields"}), 400
+    
+    # Check if user exists
+    if User.query.filter_by(username=data['username']).first():
+        return jsonify({"error": "Username already exists"}), 400
+    if User.query.filter_by(email=data['email']).first():
+        return jsonify({"error": "Email already exists"}), 400
+    
+    # Hash password
+    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    
+    # Create new user
+    new_user = User(
+        username=data['username'],
+        email=data['email'],
+        password=hashed_password
+    )
+    
+    db.session.add(new_user)
+    db.session.commit()
+    
+    return jsonify({"message": "User created successfully"}), 201
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({"error": "Resource not found"}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return jsonify({"error": "Internal server error"}), 500
+
+# Add to your existing code
+@app.route('/profile', methods=['GET'])
+@jwt_required()
+def get_profile():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    return jsonify({
+        "username": user.username,
+        "email": user.email,
+        "created_at": user.created_at.isoformat()
+    }), 200
+
+@app.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    current_user_id = get_jwt_identity()
+    new_token = create_access_token(identity=current_user_id)
+    return jsonify({"access_token": new_token}), 200
+
 
 if __name__ == '__main__':
     app.run(debug=os.getenv('FLASK_DEBUG', 'False') == 'True')
