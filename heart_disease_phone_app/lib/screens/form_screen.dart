@@ -3,7 +3,7 @@ import '../styles/styles.dart';
 import '../widgets/button.dart';
 import '../widgets/wrapper.dart';
 import '../widgets/input.dart';
-// import '../services/api_service.dart';
+import '../services/api_service.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key});
@@ -14,7 +14,7 @@ class FormScreen extends StatefulWidget {
 
 class _FormScreenState extends State<FormScreen> {
   final GlobalKey<FormState> formKey = GlobalKey();
-  // final ApiService _apiService = ApiService();
+  final ApiService _apiService = ApiService();
 
   // Controllers for text inputs
   final TextEditingController ageController = TextEditingController();
@@ -32,7 +32,7 @@ class _FormScreenState extends State<FormScreen> {
   int slopeOfSt = 1;
   int numberOfVesselsFluro = 0;
   int thallium = 3;
-  Map? data;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +51,7 @@ class _FormScreenState extends State<FormScreen> {
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // 1. Age
@@ -84,7 +84,7 @@ class _FormScreenState extends State<FormScreen> {
                     isExpanded: true,
                     value: sex,
                     style: Styles.inputStyle,
-                    dropdownColor: Colors.lightBlue[50],
+                    dropdownColor: Colors.lightBlue,
                     borderRadius: BorderRadius.circular(12),
                     underline: Styles.underline,
                     items: const [
@@ -110,7 +110,7 @@ class _FormScreenState extends State<FormScreen> {
                     isExpanded: true,
                     value: chestPainType,
                     style: Styles.inputStyle,
-                    dropdownColor: Colors.lightBlue[50],
+                    dropdownColor: Colors.lightBlue,
                     borderRadius: BorderRadius.circular(12),
                     underline: Styles.underline,
                     items: const [
@@ -190,7 +190,7 @@ class _FormScreenState extends State<FormScreen> {
                     isExpanded: true,
                     value: fbsOver120,
                     style: Styles.inputStyle,
-                    dropdownColor: Colors.lightBlue[50],
+                    dropdownColor: Colors.lightBlue,
                     borderRadius: BorderRadius.circular(12),
                     underline: Styles.underline,
                     items: const [
@@ -216,7 +216,7 @@ class _FormScreenState extends State<FormScreen> {
                     isExpanded: true,
                     value: ekgResults,
                     style: Styles.inputStyle,
-                    dropdownColor: Colors.lightBlue[50],
+                    dropdownColor: Colors.lightBlue,
                     borderRadius: BorderRadius.circular(12),
                     underline: Styles.underline,
                     items: const [
@@ -269,7 +269,7 @@ class _FormScreenState extends State<FormScreen> {
                     isExpanded: true,
                     value: exerciseAngina,
                     style: Styles.inputStyle,
-                    dropdownColor: Colors.lightBlue[50],
+                    dropdownColor: Colors.lightBlue,
                     borderRadius: BorderRadius.circular(12),
                     underline: Styles.underline,
                     items: const [
@@ -314,7 +314,7 @@ class _FormScreenState extends State<FormScreen> {
                     isExpanded: true,
                     value: slopeOfSt,
                     style: Styles.inputStyle,
-                    dropdownColor: Colors.lightBlue[50],
+                    dropdownColor: Colors.lightBlue,
                     borderRadius: BorderRadius.circular(12),
                     underline: Styles.underline,
                     items: const [
@@ -344,7 +344,7 @@ class _FormScreenState extends State<FormScreen> {
                     isExpanded: true,
                     value: numberOfVesselsFluro,
                     style: Styles.inputStyle,
-                    dropdownColor: Colors.lightBlue[50],
+                    dropdownColor: Colors.lightBlue,
                     borderRadius: BorderRadius.circular(12),
                     underline: Styles.underline,
                     items: const [
@@ -366,7 +366,7 @@ class _FormScreenState extends State<FormScreen> {
                     isExpanded: true,
                     value: thallium,
                     style: Styles.inputStyle,
-                    dropdownColor: Colors.lightBlue[50],
+                    dropdownColor: Colors.lightBlue,
                     borderRadius: BorderRadius.circular(12),
                     underline: Styles.underline,
                     items: const [
@@ -395,42 +395,40 @@ class _FormScreenState extends State<FormScreen> {
                 Button(
                   onClick: () {
                     if (formKey.currentState!.validate()) {
-                      // Prepare data for API call
-                      data = {
-                        'age': int.parse(ageController.text),
-                        'sex': sex,
-                        'chest_pain_type': chestPainType,
-                        'bp': int.parse(bpController.text),
-                        'cholesterol': int.parse(cholesterolController.text),
-                        'fbs_over_120': fbsOver120,
-                        'ekg_results': ekgResults,
-                        'max_hr': int.parse(maxHrController.text),
-                        'exercise_angina': exerciseAngina,
-                        'st_depression':
-                            double.parse(stDepressionController.text),
-                        'slope_of_st': slopeOfSt,
-                        'number_of_vessels_fluro': numberOfVesselsFluro,
-                        'thallium': thallium,
-                      };
-
                       // Uncomment when API service is ready
-                      // _apiService.predictHeartDisease(data).then((result) {
-                      //   showDialog(
-                      //     context: context,
-                      //     builder: (ctx) => AlertDialog(
-                      //       title: Text(result['hasDisease']
-                      //           ? "Risk Detected"
-                      //           : "No Risk Detected"),
-                      //       content: Text(result['message']),
-                      //       actions: [
-                      //         TextButton(
-                      //           onPressed: () => Navigator.pop(ctx),
-                      //           child: const Text("OK"),
-                      //         )
-                      //       ],
-                      //     ),
-                      //   );
-                      // });
+                      _apiService
+                          .predictHeartDisease(
+                        age: int.parse(ageController.text),
+                        sex: sex,
+                        chestPainType: chestPainType,
+                        bp: int.parse(bpController.text),
+                        cholesterol: int.parse(cholesterolController.text),
+                        fbsOver120: fbsOver120,
+                        ekgResults: ekgResults,
+                        maxHr: int.parse(maxHrController.text),
+                        exerciseAngina: exerciseAngina,
+                        stDepression: double.parse(stDepressionController.text),
+                        slopeOfSt: slopeOfSt,
+                        numberOfVesselsFluro: numberOfVesselsFluro,
+                        thallium: thallium,
+                      )
+                          .then((result) {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: Text(result['hasDisease']
+                                ? "Risk Detected"
+                                : "No Risk Detected"),
+                            content: Text(result['message']),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx),
+                                child: const Text("OK"),
+                              )
+                            ],
+                          ),
+                        );
+                      });
 
                       // Temporary demo response
                       showDialog(

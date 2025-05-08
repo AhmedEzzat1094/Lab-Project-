@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 class ApiService {
   final Dio _dio;
-  static const String _baseUrl = ' https://racial-celine-dot98889-fd93329a.koyeb.app/'; 
+  static const String _baseUrl = 'https://racial-celine-dot98889-fd93329a.koyeb.app/'; 
 
   ApiService() : _dio = Dio(BaseOptions(
           baseUrl: _baseUrl,
