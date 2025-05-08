@@ -153,7 +153,7 @@ class _FormScreenState extends State<FormScreen> {
                     if (!RegExp(r'^\d+$').hasMatch(value)) {
                       return 'Only numbers allowed';
                     }
-                    final bp = int.tryParse(value) ?? 0;
+                    final bp = int.parse(value);
                     if (bp < 50) return "BP too low (min 50)";
                     if (bp > 250) return "BP too high (max 250)";
                     return null;
@@ -393,62 +393,100 @@ class _FormScreenState extends State<FormScreen> {
 
                 // Submit Button
                 Button(
-                  onClick: () {
+                  onClick: () async {
                     if (formKey.currentState!.validate()) {
-                      // Uncomment when API service is ready
-                      _apiService
-                          .predictHeartDisease(
-                        age: int.parse(ageController.text),
-                        sex: sex,
-                        chestPainType: chestPainType,
-                        bp: int.parse(bpController.text),
-                        cholesterol: int.parse(cholesterolController.text),
-                        fbsOver120: fbsOver120,
-                        ekgResults: ekgResults,
-                        maxHr: int.parse(maxHrController.text),
-                        exerciseAngina: exerciseAngina,
-                        stDepression: double.parse(stDepressionController.text),
-                        slopeOfSt: slopeOfSt,
-                        numberOfVesselsFluro: numberOfVesselsFluro,
-                        thallium: thallium,
-                      )
-                          .then((result) {
+                      try {
+                        // Show loading indicator
                         showDialog(
                           context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: Text(result['hasDisease']
-                                ? "Risk Detected"
-                                : "No Risk Detected"),
-                            content: Text(result['message']),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(ctx),
-                                child: const Text("OK"),
-                              )
-                            ],
+                          barrierDismissible: false,
+                          builder: (_) =>
+                              const Center(child: CircularProgressIndicator()),
+                        );
+
+                        final result = await _apiService.predictHeartDisease(
+                          age: int.tryParse(ageController.text) ?? 0,
+                          sex: sex,
+                          chestPainType: chestPainType,
+                          bp: int.tryParse(bpController.text) ?? 0,
+                          cholesterol:
+                              int.tryParse(cholesterolController.text) ?? 0,
+                          fbsOver120: fbsOver120,
+                          ekgResults: ekgResults,
+                          maxHr: int.tryParse(maxHrController.text) ?? 0,
+                          exerciseAngina: exerciseAngina,
+                          stDepression:
+                              double.tryParse(stDepressionController.text) ??
+                                  0.0,
+                          slopeOfSt: slopeOfSt,
+                          numberOfVesselsFluro: numberOfVesselsFluro,
+                          thallium: thallium,
+                        );
+
+                        // Close loading indicator
+                        Navigator.pop(context);
+
+                        if (result['error'] == true) {
+                          // Show error dialog for 400 responses
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text("Invalid Input"),
+                              content: Text(result['message']),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx),
+                                  child: const Text("OK"),
+                                )
+                              ],
+                            ),
+                          );
+                        } else {
+                          // Show prediction result
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: Text(result['hasDisease']
+                                  ? "Risk Detected"
+                                  : "No Risk Detected"),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(result['message']),
+                                  if (result['probability'] != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: Text(
+                                        'Probability: ${(result['probability'] * 100).toStringAsFixed(1)}%',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx),
+                                  child: const Text("OK"),
+                                )
+                              ],
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        // Close loading indicator if still open
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error: ${e.toString()}'),
+                            duration: const Duration(seconds: 5),
                           ),
                         );
-                      });
-
-                      // Temporary demo response
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          title: const Text("Submission Successful"),
-                          content: const Text(
-                              "All fields validated. Ready for API integration."),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(ctx),
-                              child: const Text("OK"),
-                            )
-                          ],
-                        ),
-                      );
+                      }
                     }
                   },
                   text: "Submit",
-                ),
+                )
               ],
             ),
           ),
