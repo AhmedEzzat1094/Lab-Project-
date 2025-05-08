@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/widgets/button.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -13,20 +14,11 @@ class HomeScreen extends StatelessWidget {
           Image.asset(
             "assets/roboat.png",
           ),
-          MaterialButton(
-            color: Colors.lightBlue,
-            minWidth: 150,
-            height: 60,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, "form_screen");
-            },
-            child: const Text(
-              "Start Check",
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-            ),
-          )
+          Button(
+              onClick: () {
+                Navigator.pushReplacementNamed(context, "form_screen");
+              },
+              text: "Do Check")
         ],
       ),
     );

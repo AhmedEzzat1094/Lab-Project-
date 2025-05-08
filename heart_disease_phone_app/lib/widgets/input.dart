@@ -32,7 +32,7 @@ class Input extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8.0),
       child: TextFormField(
         style: const TextStyle(
-            color: Colors.lightBlue, fontSize: 20, fontWeight: FontWeight.bold),
+            color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         maxLength: maxLength,
         keyboardType: inputType,
         decoration: InputDecoration(

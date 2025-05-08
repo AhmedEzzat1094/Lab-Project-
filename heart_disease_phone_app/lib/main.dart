@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "screens/result_screen.dart";
 import "screens/form_screen.dart";
 import "screens/home_screen.dart";
 
@@ -23,6 +24,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         "/": (ctx) => const HomeScreen(),
         "form_screen": (ctx) => const FormScreen(),
+        "result_screen": (ctx) => const ResultScreen()
       },
     );
   }
