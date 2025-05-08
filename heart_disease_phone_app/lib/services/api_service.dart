@@ -8,8 +8,8 @@ class ApiService {
   ApiService()
       : _dio = Dio(BaseOptions(
           baseUrl: _baseUrl,
-          connectTimeout: const Duration(seconds: 10),
-          receiveTimeout: const Duration(seconds: 10),
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 30),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -31,49 +31,54 @@ class ApiService {
     required int thallium,
   }) async {
     try {
+      // Use the exact parameter names that your API expects
       final requestData = {
-        'Age': age,
-        'Sex': sex,
-        'Chest pain type': chestPainType,
-        'BP': bp,
-        'Cholesterol': cholesterol,
-        'FBS over 120': fbsOver120,
-        'EKG results': ekgResults,
-        'Max HR': maxHr,
-        'Exercise angina': exerciseAngina,
-        'ST depression': stDepression,
-        'Slope of ST': slopeOfSt,
-        'Number of vessels fluro': numberOfVesselsFluro,
-        'Thallium': thallium,
+        "age": 20,
+        "sex": 1,
+        "chest_pain_type": 2,
+        "bp": 130,
+        "cholesterol": 100,
+        "fbs_over_120": 0,
+        "ekg_results": 1,
+        "max_hr": 150,
+        "exercise_angina": 0,
+        "st_depression": 1.2,
+        "slope_of_st": 2,
+        "number_of_vessels_fluro": 1,
+        "thallium": 3
       };
 
-      print('Request Data: $requestData');
+      print('Sending request with data: $requestData');
 
       final response = await _dio.post(
         '/predict',
         data: requestData,
         options: Options(
-          validateStatus: (status) => status! < 500, // Accept 400 responses
+          validateStatus: (status) => status! < 500,
         ),
       );
 
-      print('Response Status: ${response.statusCode}');
-      print('Response Data: ${response.data}');
+      print('Received response: ${response.data}');
 
       if (response.statusCode == 200) {
         return _parseSuccessResponse(response.data);
       } else if (response.statusCode == 400) {
         return _parse400Error(response.data);
       } else {
-        throw Exception('API Error: ${response.statusCode}');
+        throw Exception('API error: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      if (e.response?.statusCode == 400) {
-        return _parse400Error(e.response?.data);
+      print('Dio error: ${e.message}');
+      if (e.response != null) {
+        print('Error response: ${e.response?.data}');
+        if (e.response?.statusCode == 400) {
+          return _parse400Error(e.response?.data);
+        }
       }
-      throw Exception('Network Error: ${e.message}');
+      throw Exception('Failed to connect to API: ${e.message}');
     } catch (e) {
-      throw Exception('Unexpected Error: $e');
+      print('Unexpected error: $e');
+      throw Exception('An unexpected error occurred');
     }
   }
 
