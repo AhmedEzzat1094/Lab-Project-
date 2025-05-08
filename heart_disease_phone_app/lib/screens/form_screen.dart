@@ -15,11 +15,24 @@ class FormScreen extends StatefulWidget {
 class _FormScreenState extends State<FormScreen> {
   final GlobalKey<FormState> formKey = GlobalKey();
   // final ApiService _apiService = ApiService();
+
+  // Controllers for text inputs
   final TextEditingController ageController = TextEditingController();
+  final TextEditingController bpController = TextEditingController();
+  final TextEditingController cholesterolController = TextEditingController();
+  final TextEditingController maxHrController = TextEditingController();
+  final TextEditingController stDepressionController = TextEditingController();
+
+  // State variables for dropdowns
   int sex = 0;
-  // ignore: non_constant_identifier_names
-  int chest_pain_type = 1;
-  TextEditingController bpController = TextEditingController();
+  int chestPainType = 1;
+  int fbsOver120 = 0;
+  int ekgResults = 0;
+  int exerciseAngina = 0;
+  int slopeOfSt = 1;
+  int numberOfVesselsFluro = 0;
+  int thallium = 3;
+  Map? data;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +40,7 @@ class _FormScreenState extends State<FormScreen> {
         iconTheme: IconThemeData(size: 35, color: Colors.grey[900]),
         foregroundColor: Colors.grey[900],
         title: const Text(
-          "Syptoms Form",
+          "Symptoms Form",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
         ),
         backgroundColor: Colors.lightBlue,
@@ -41,7 +54,7 @@ class _FormScreenState extends State<FormScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                //1
+                // 1. Age
                 Input(
                   labelText: "Age",
                   controller: ageController,
@@ -53,57 +66,52 @@ class _FormScreenState extends State<FormScreen> {
                   ),
                   maxLength: 3,
                   validate: (value) {
-                    if (value!.isEmpty) {
-                      "Age feild is required";
-                    }
-                    if (int.parse(value) < 0) {
-                      "Age feild must be greater than zero";
-                    }
-                    if (int.parse(value) < 120) {
-                      "Age feild must be smaller than or equal 120";
-                    }
+                    if (value!.isEmpty) return "Age field is required";
                     if (!RegExp(r'^\d+$').hasMatch(value)) {
                       return 'Only integer numbers are allowed';
                     }
+                    final age = int.tryParse(value) ?? 0;
+                    if (age <= 0) return "Age must be greater than zero";
+                    if (age > 120) return "Age must be 120 or less";
+                    return null;
                   },
                 ),
 
-                //2
+                // 2. Sex
                 Wrapper(
                   label: "Sex",
-                  child: DropdownButton(
+                  child: DropdownButton<int>(
                     isExpanded: true,
                     value: sex,
                     style: Styles.inputStyle,
-                    dropdownColor: Colors.lightBlue,
-                    borderRadius: BorderRadius.circular(30),
+                    dropdownColor: Colors.lightBlue[50],
+                    borderRadius: BorderRadius.circular(12),
                     underline: Styles.underline,
                     items: const [
                       DropdownMenuItem(
                         value: 0,
-                        child: Text("Male"),
+                        child: Text("Female"),
                       ),
                       DropdownMenuItem(
                         value: 1,
-                        child: Text("Female"),
+                        child: Text("Male"),
                       )
                     ],
-                    onChanged: (Object? value) {
-                      sex = value as int;
-                      setState(() {});
+                    onChanged: (int? value) {
+                      setState(() => sex = value ?? 0);
                     },
                   ),
                 ),
-                //3
 
+                // 3. Chest Pain Type
                 Wrapper(
                   label: "Chest pain type",
-                  child: DropdownButton(
+                  child: DropdownButton<int>(
                     isExpanded: true,
-                    value: chest_pain_type,
+                    value: chestPainType,
                     style: Styles.inputStyle,
-                    dropdownColor: Colors.lightBlue,
-                    borderRadius: BorderRadius.circular(30),
+                    dropdownColor: Colors.lightBlue[50],
+                    borderRadius: BorderRadius.circular(12),
                     underline: Styles.underline,
                     items: const [
                       DropdownMenuItem(
@@ -116,87 +124,348 @@ class _FormScreenState extends State<FormScreen> {
                       ),
                       DropdownMenuItem(
                         value: 3,
-                        child: Text("Non-anginal"),
+                        child: Text("Non-anginal pain"),
                       ),
                       DropdownMenuItem(
                         value: 4,
                         child: Text("Asymptomatic"),
                       )
                     ],
-                    onChanged: (Object? value) {
-                      chest_pain_type = value as int;
-                      setState(() {});
+                    onChanged: (int? value) {
+                      setState(() => chestPainType = value ?? 1);
                     },
                   ),
                 ),
-                //4
+
+                // 4. Blood Pressure
                 Input(
-                  labelText: "BP",
+                  labelText: "Resting Blood Pressure (mm Hg)",
                   controller: bpController,
                   inputType: TextInputType.number,
                   suffixIcon: const Icon(
-                    Icons.bloodtype_rounded,
+                    Icons.monitor_heart_outlined,
                     color: Colors.lightBlue,
                     size: 25,
                   ),
                   maxLength: 3,
+                  validate: (value) {
+                    if (value!.isEmpty) return "BP is required";
+                    if (!RegExp(r'^\d+$').hasMatch(value)) {
+                      return 'Only numbers allowed';
+                    }
+                    final bp = int.tryParse(value) ?? 0;
+                    if (bp < 50) return "BP too low (min 50)";
+                    if (bp > 250) return "BP too high (max 250)";
+                    return null;
+                  },
                 ),
-                //5
+
+                // 5. Cholesterol
+                Input(
+                  labelText: "Serum Cholesterol (mg/dl)",
+                  controller: cholesterolController,
+                  inputType: TextInputType.number,
+                  suffixIcon: const Icon(
+                    Icons.bloodtype_outlined,
+                    color: Colors.lightBlue,
+                    size: 25,
+                  ),
+                  maxLength: 3,
+                  validate: (value) {
+                    if (value!.isEmpty) return "Cholesterol is required";
+                    if (!RegExp(r'^\d+$').hasMatch(value)) {
+                      return 'Only numbers allowed';
+                    }
+                    final cholesterol = int.tryParse(value) ?? 0;
+                    if (cholesterol < 100) return "Minimum 100 mg/dl";
+                    if (cholesterol > 600) return "Maximum 600 mg/dl";
+                    return null;
+                  },
+                ),
+
+                // 6. Fasting Blood Sugar
                 Wrapper(
-                  label: "Chest pain type",
-                  child: DropdownButton(
+                  label: "Fasting Blood Sugar > 120 mg/dl",
+                  child: DropdownButton<int>(
                     isExpanded: true,
-                    value: chest_pain_type,
+                    value: fbsOver120,
                     style: Styles.inputStyle,
-                    dropdownColor: Colors.lightBlue,
-                    borderRadius: BorderRadius.circular(30),
+                    dropdownColor: Colors.lightBlue[50],
+                    borderRadius: BorderRadius.circular(12),
+                    underline: Styles.underline,
+                    items: const [
+                      DropdownMenuItem(
+                        value: 0,
+                        child: Text("No"),
+                      ),
+                      DropdownMenuItem(
+                        value: 1,
+                        child: Text("Yes"),
+                      )
+                    ],
+                    onChanged: (int? value) {
+                      setState(() => fbsOver120 = value ?? 0);
+                    },
+                  ),
+                ),
+
+                // 7. EKG Results
+                Wrapper(
+                  label: "Resting EKG Results",
+                  child: DropdownButton<int>(
+                    isExpanded: true,
+                    value: ekgResults,
+                    style: Styles.inputStyle,
+                    dropdownColor: Colors.lightBlue[50],
+                    borderRadius: BorderRadius.circular(12),
+                    underline: Styles.underline,
+                    items: const [
+                      DropdownMenuItem(
+                        value: 0,
+                        child: Text("Normal"),
+                      ),
+                      DropdownMenuItem(
+                        value: 1,
+                        child: Text("ST-T Abnormality"),
+                      ),
+                      DropdownMenuItem(
+                        value: 2,
+                        child: Text("LV Hypertrophy"),
+                      )
+                    ],
+                    onChanged: (int? value) {
+                      setState(() => ekgResults = value ?? 0);
+                    },
+                  ),
+                ),
+
+                // 8. Max Heart Rate
+                Input(
+                  labelText: "Maximum Heart Rate Achieved",
+                  controller: maxHrController,
+                  inputType: TextInputType.number,
+                  suffixIcon: const Icon(
+                    Icons.favorite_outline,
+                    color: Colors.lightBlue,
+                    size: 25,
+                  ),
+                  maxLength: 3,
+                  validate: (value) {
+                    if (value!.isEmpty) return "Heart rate is required";
+                    if (!RegExp(r'^\d+$').hasMatch(value)) {
+                      return 'Only numbers allowed';
+                    }
+                    final hr = int.tryParse(value) ?? 0;
+                    if (hr < 50) return "Minimum 50 bpm";
+                    if (hr > 220) return "Maximum 220 bpm";
+                    return null;
+                  },
+                ),
+
+                // 9. Exercise Angina
+                Wrapper(
+                  label: "Exercise-Induced Angina",
+                  child: DropdownButton<int>(
+                    isExpanded: true,
+                    value: exerciseAngina,
+                    style: Styles.inputStyle,
+                    dropdownColor: Colors.lightBlue[50],
+                    borderRadius: BorderRadius.circular(12),
+                    underline: Styles.underline,
+                    items: const [
+                      DropdownMenuItem(
+                        value: 0,
+                        child: Text("No"),
+                      ),
+                      DropdownMenuItem(
+                        value: 1,
+                        child: Text("Yes"),
+                      )
+                    ],
+                    onChanged: (int? value) {
+                      setState(() => exerciseAngina = value ?? 0);
+                    },
+                  ),
+                ),
+
+                // 10. ST Depression
+                Input(
+                  labelText: "ST Depression Induced by Exercise",
+                  controller: stDepressionController,
+                  inputType: TextInputType.number,
+                  suffixIcon: const Icon(
+                    Icons.show_chart_outlined,
+                    color: Colors.lightBlue,
+                    size: 25,
+                  ),
+                  validate: (value) {
+                    if (value!.isEmpty) return "ST depression is required";
+                    final stDepression = double.tryParse(value) ?? 0.0;
+                    if (stDepression < 0) return "Minimum 0";
+                    if (stDepression > 10) return "Maximum 10";
+                    return null;
+                  },
+                ),
+
+                // 11. Slope of ST Segment
+                Wrapper(
+                  label: "Slope of Peak Exercise ST Segment",
+                  child: DropdownButton<int>(
+                    isExpanded: true,
+                    value: slopeOfSt,
+                    style: Styles.inputStyle,
+                    dropdownColor: Colors.lightBlue[50],
+                    borderRadius: BorderRadius.circular(12),
                     underline: Styles.underline,
                     items: const [
                       DropdownMenuItem(
                         value: 1,
-                        child: Text("Typical angina"),
+                        child: Text("Upsloping"),
                       ),
                       DropdownMenuItem(
                         value: 2,
-                        child: Text("Atypical angina"),
+                        child: Text("Flat"),
                       ),
                       DropdownMenuItem(
                         value: 3,
-                        child: Text("Non-anginal"),
-                      ),
-                      DropdownMenuItem(
-                        value: 4,
-                        child: Text("Asymptomatic"),
+                        child: Text("Downsloping"),
                       )
                     ],
-                    onChanged: (Object? value) {
-                      chest_pain_type = value as int;
-                      setState(() {});
+                    onChanged: (int? value) {
+                      setState(() => slopeOfSt = value ?? 1);
                     },
                   ),
                 ),
-                Button(
-                    onClick: () {
-                      // _apiService.predictHeartDisease(age: age,
-                      //       sex: sex,
-                      //       chestPainType: chestPainType,
-                      //        bp: bp,
-                      //        cholesterol: cholesterol,
-                      //        fbsOver120: fbsOver120,
-                      //        ekgResults: ekgResults,
-                      //        maxHr: maxHr,
-                      //        exerciseAngina: exerciseAngina,
-                      //        stDepression: stDepression,
-                      //        slopeOfSt: slopeOfSt,
-                      //        numberOfVesselsFluro: numberOfVesselsFluro,
-                      //        thallium: thallium)
+
+                // 12. Number of Vessels (Fluoroscopy)
+                Wrapper(
+                  label: "Number of Major Vessels (0-3)",
+                  child: DropdownButton<int>(
+                    isExpanded: true,
+                    value: numberOfVesselsFluro,
+                    style: Styles.inputStyle,
+                    dropdownColor: Colors.lightBlue[50],
+                    borderRadius: BorderRadius.circular(12),
+                    underline: Styles.underline,
+                    items: const [
+                      DropdownMenuItem(value: 0, child: Text("0")),
+                      DropdownMenuItem(value: 1, child: Text("1")),
+                      DropdownMenuItem(value: 2, child: Text("2")),
+                      DropdownMenuItem(value: 3, child: Text("3")),
+                    ],
+                    onChanged: (int? value) {
+                      setState(() => numberOfVesselsFluro = value ?? 0);
                     },
-                    text: "Submit")
+                  ),
+                ),
+
+                // 13. Thallium Stress Test
+                Wrapper(
+                  label: "Thallium Stress Test Result",
+                  child: DropdownButton<int>(
+                    isExpanded: true,
+                    value: thallium,
+                    style: Styles.inputStyle,
+                    dropdownColor: Colors.lightBlue[50],
+                    borderRadius: BorderRadius.circular(12),
+                    underline: Styles.underline,
+                    items: const [
+                      DropdownMenuItem(
+                        value: 3,
+                        child: Text("Normal"),
+                      ),
+                      DropdownMenuItem(
+                        value: 6,
+                        child: Text("Fixed Defect"),
+                      ),
+                      DropdownMenuItem(
+                        value: 7,
+                        child: Text("Reversible Defect"),
+                      )
+                    ],
+                    onChanged: (int? value) {
+                      setState(() => thallium = value ?? 3);
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Submit Button
+                Button(
+                  onClick: () {
+                    if (formKey.currentState!.validate()) {
+                      // Prepare data for API call
+                      data = {
+                        'age': int.parse(ageController.text),
+                        'sex': sex,
+                        'chest_pain_type': chestPainType,
+                        'bp': int.parse(bpController.text),
+                        'cholesterol': int.parse(cholesterolController.text),
+                        'fbs_over_120': fbsOver120,
+                        'ekg_results': ekgResults,
+                        'max_hr': int.parse(maxHrController.text),
+                        'exercise_angina': exerciseAngina,
+                        'st_depression':
+                            double.parse(stDepressionController.text),
+                        'slope_of_st': slopeOfSt,
+                        'number_of_vessels_fluro': numberOfVesselsFluro,
+                        'thallium': thallium,
+                      };
+
+                      // Uncomment when API service is ready
+                      // _apiService.predictHeartDisease(data).then((result) {
+                      //   showDialog(
+                      //     context: context,
+                      //     builder: (ctx) => AlertDialog(
+                      //       title: Text(result['hasDisease']
+                      //           ? "Risk Detected"
+                      //           : "No Risk Detected"),
+                      //       content: Text(result['message']),
+                      //       actions: [
+                      //         TextButton(
+                      //           onPressed: () => Navigator.pop(ctx),
+                      //           child: const Text("OK"),
+                      //         )
+                      //       ],
+                      //     ),
+                      //   );
+                      // });
+
+                      // Temporary demo response
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text("Submission Successful"),
+                          content: const Text(
+                              "All fields validated. Ready for API integration."),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text("OK"),
+                            )
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                  text: "Submit",
+                ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    ageController.dispose();
+    bpController.dispose();
+    cholesterolController.dispose();
+    maxHrController.dispose();
+    stDepressionController.dispose();
+    super.dispose();
   }
 }

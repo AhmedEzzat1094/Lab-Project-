@@ -17,7 +17,7 @@ class Input extends StatelessWidget {
       required this.suffixIcon,
       this.labelText,
       this.validate,
-      required this.maxLength});
+       this.maxLength});
   InputBorder borderStyle(double width, Color color) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
