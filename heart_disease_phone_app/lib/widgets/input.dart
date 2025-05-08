@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
 class Input extends StatelessWidget {
-  final Key formKey;
   final TextEditingController controller;
   final TextInputType inputType;
   final Widget suffixIcon;
   final String? labelText;
   final String? Function(String?)? validate;
+  final int maxLength;
 
   const Input(
       {super.key,
-      required this.formKey,
       required this.controller,
       required this.inputType,
       required this.suffixIcon,
       this.labelText,
-      this.validate});
+      this.validate,
+      required this.maxLength});
   InputBorder borderStyle(double width, Color color) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
@@ -28,6 +28,31 @@ class Input extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField();
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: TextFormField(
+        style: const TextStyle(
+            color: Colors.lightBlue, fontSize: 20, fontWeight: FontWeight.bold),
+        maxLength: maxLength,
+        keyboardType: inputType,
+        decoration: InputDecoration(
+          suffixIcon: suffixIcon,
+          suffixIconColor: Colors.lightBlue,
+          fillColor: Colors.grey[900],
+          filled: true,
+          label: Text(
+            labelText!,
+            style: const TextStyle(
+                color: Colors.lightBlue,
+                fontSize: 20,
+                fontWeight: FontWeight.bold),
+          ),
+          border: borderStyle(2, Colors.grey),
+          focusedBorder: borderStyle(2, Colors.lightBlue),
+          errorBorder: borderStyle(2, Colors.red),
+        ),
+        validator: validate,
+      ),
+    );
   }
 }

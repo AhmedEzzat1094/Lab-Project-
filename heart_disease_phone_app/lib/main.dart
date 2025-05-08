@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "screens/form_screen.dart";
+import "screens/home_screen.dart";
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,11 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: const FormScreen()
+      initialRoute: "/",
+      routes: {
+        "/": (ctx) => const HomeScreen(),
+        "form_screen": (ctx) => const FormScreen(),
+      },
     );
   }
 }
