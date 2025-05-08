@@ -121,12 +121,3 @@ This project is licensed under the MIT License.
 📬 Contact
 For any queries or collaboration opportunities, feel free to open an issue or contact the maintainer.
 
-References:
-
-UCI Heart Disease Dataset
-
-[Project-README-template.md]
-
-[How to write a good Readme for your Data Science project]
-
-[Best Practices for GitHub README]
