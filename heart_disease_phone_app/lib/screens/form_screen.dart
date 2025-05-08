@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../styles/styles.dart';
 import '../widgets/button.dart';
 import '../widgets/wrapper.dart';
 import '../widgets/input.dart';
@@ -15,8 +16,10 @@ class _FormScreenState extends State<FormScreen> {
   final GlobalKey<FormState> formKey = GlobalKey();
   // final ApiService _apiService = ApiService();
   final TextEditingController ageController = TextEditingController();
-  String sex = "male";
-  String chest_pain_type = "Typical angina";
+  int sex = 0;
+  // ignore: non_constant_identifier_names
+  int chest_pain_type = 1;
+  TextEditingController bpController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +52,20 @@ class _FormScreenState extends State<FormScreen> {
                     size: 25,
                   ),
                   maxLength: 3,
+                  validate: (value) {
+                    if (value!.isEmpty) {
+                      "Age feild is required";
+                    }
+                    if (int.parse(value) < 0) {
+                      "Age feild must be greater than zero";
+                    }
+                    if (int.parse(value) < 120) {
+                      "Age feild must be smaller than or equal 120";
+                    }
+                    if (!RegExp(r'^\d+$').hasMatch(value)) {
+                      return 'Only integer numbers are allowed';
+                    }
+                  },
                 ),
 
                 //2
@@ -57,61 +74,103 @@ class _FormScreenState extends State<FormScreen> {
                   child: DropdownButton(
                     isExpanded: true,
                     value: sex,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Styles.inputStyle,
                     dropdownColor: Colors.lightBlue,
                     borderRadius: BorderRadius.circular(30),
-                    underline: Container(
-                      height: 4,
-                      color: Colors.lightBlue,
-                    ),
+                    underline: Styles.underline,
                     items: const [
                       DropdownMenuItem(
-                        value: "male",
+                        value: 0,
                         child: Text("Male"),
                       ),
                       DropdownMenuItem(
-                        value: "female",
+                        value: 1,
                         child: Text("Female"),
                       )
                     ],
                     onChanged: (Object? value) {
-                      sex = value as String;
+                      sex = value as int;
                       setState(() {});
                     },
                   ),
                 ),
                 //3
-              
+
                 Wrapper(
                   label: "Chest pain type",
                   child: DropdownButton(
                     isExpanded: true,
                     value: chest_pain_type,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Styles.inputStyle,
                     dropdownColor: Colors.lightBlue,
                     borderRadius: BorderRadius.circular(30),
-                    underline: Container(
-                      height: 4,
-                      color: Colors.lightBlue,
-                    ),
+                    underline: Styles.underline,
                     items: const [
                       DropdownMenuItem(
-                        value: "male",
-                        child: Text("Male"),
+                        value: 1,
+                        child: Text("Typical angina"),
                       ),
                       DropdownMenuItem(
-                        value: "female",
-                        child: Text("Female"),
+                        value: 2,
+                        child: Text("Atypical angina"),
+                      ),
+                      DropdownMenuItem(
+                        value: 3,
+                        child: Text("Non-anginal"),
+                      ),
+                      DropdownMenuItem(
+                        value: 4,
+                        child: Text("Asymptomatic"),
                       )
                     ],
                     onChanged: (Object? value) {
-                      sex = value as String;
+                      chest_pain_type = value as int;
+                      setState(() {});
+                    },
+                  ),
+                ),
+                //4
+                Input(
+                  labelText: "BP",
+                  controller: bpController,
+                  inputType: TextInputType.number,
+                  suffixIcon: const Icon(
+                    Icons.bloodtype_rounded,
+                    color: Colors.lightBlue,
+                    size: 25,
+                  ),
+                  maxLength: 3,
+                ),
+                //5
+                Wrapper(
+                  label: "Chest pain type",
+                  child: DropdownButton(
+                    isExpanded: true,
+                    value: chest_pain_type,
+                    style: Styles.inputStyle,
+                    dropdownColor: Colors.lightBlue,
+                    borderRadius: BorderRadius.circular(30),
+                    underline: Styles.underline,
+                    items: const [
+                      DropdownMenuItem(
+                        value: 1,
+                        child: Text("Typical angina"),
+                      ),
+                      DropdownMenuItem(
+                        value: 2,
+                        child: Text("Atypical angina"),
+                      ),
+                      DropdownMenuItem(
+                        value: 3,
+                        child: Text("Non-anginal"),
+                      ),
+                      DropdownMenuItem(
+                        value: 4,
+                        child: Text("Asymptomatic"),
+                      )
+                    ],
+                    onChanged: (Object? value) {
+                      chest_pain_type = value as int;
                       setState(() {});
                     },
                   ),

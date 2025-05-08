@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../styles/styles.dart';
+
 class Input extends StatelessWidget {
   final TextEditingController controller;
   final TextInputType inputType;
   final Widget suffixIcon;
   final String? labelText;
   final String? Function(String?)? validate;
-  final int maxLength;
+  final int? maxLength;
 
   const Input(
       {super.key,
@@ -29,10 +31,9 @@ class Input extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
-        style: const TextStyle(
-            color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        style: Styles.inputStyle,
         maxLength: maxLength,
         keyboardType: inputType,
         decoration: InputDecoration(

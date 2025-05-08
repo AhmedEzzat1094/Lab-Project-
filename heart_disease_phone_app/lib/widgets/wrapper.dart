@@ -8,8 +8,8 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 8),
-      height: 100,
+      margin: const EdgeInsets.only(top: 10),
+      height: 90,
       decoration: BoxDecoration(
           color: Colors.grey[900],
           borderRadius: BorderRadius.circular(10),
