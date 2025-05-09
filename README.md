@@ -34,7 +34,9 @@ This Flutter app is designed to help users get a quick risk assessment based on 
 
 ## 📷 Screenshots
 
-(Add screenshots here if available)
+```
+![Record_2025-05-08-21-06-18_aeeeeffb1c0cc2b30fd2f6e289ce37ba](https://github.com/user-attachments/assets/5a994282-8218-4509-9615-6a71eed08f55)
+```
 
 ---
 
@@ -74,9 +76,19 @@ Ensure the API is up and running. The app sends a POST request with symptom data
 
 ```json
 {
-  "age": 45,
-  "chest_pain": 1,
-  "blood_pressure": 130
+  "age": 55,
+  "sex": 1,
+  "chest_pain_type": 2,
+  "bp": 130,
+  "cholesterol": 250,
+  "fbs_over_120": 0,
+  "ekg_results": 1,
+  "max_hr": 150,
+  "exercise_angina": 0,
+  "st_depression": 1.2,
+  "slope_of_st": 2,
+  "number_of_vessels_fluro": 1,
+  "thallium": 3
 }
 ```
 
@@ -84,15 +96,12 @@ And receives a response:
 
 ```json
 {
-  "risk": true  // or false
+  "prediction": 1,
+  "probability": 0.82,
+  "message": "Prediction successful",
+  "input_data": { ... }
 }
 ```
-
----
-
-## 📬 Contact
-
-For any questions or suggestions, feel free to reach out via GitHub Issues or email at `your.email@example.com`.
 
 ---
 
