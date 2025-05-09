@@ -34,7 +34,8 @@ This Flutter app is designed to help users get a quick risk assessment based on 
 
 ## 📷 Screenshots
 
-![App Demo](assets/demo.gif)
+![App Demo](![Record_2025-05-08-21-06-18_aeeeeffb1c0cc2b30fd2f6e289ce37ba](https://github.com/user-attachments/assets/e8b6eb02-5767-4710-9828-9fd98290f685)
+)
 
 ---
 
@@ -43,7 +44,6 @@ This Flutter app is designed to help users get a quick risk assessment based on 
 - **Flutter** (Frontend)  
 - **Dart**  
 - **REST API** for prediction  
-- **Provider / Bloc** (optional, for state management)
 
 ---
 
@@ -51,17 +51,21 @@ This Flutter app is designed to help users get a quick risk assessment based on 
 
 1. Clone this repository:
    ```
-   git clone https://github.com/your-username/heart-disease-checker.git
+   git clone https://github.com/AhmedEzzat1094/Lab-Project-.git
    ```
-2. Navigate to the project folder:
+2. Switch to flutter branch:
+   ```
+   git switch flutter
+   ```
+3. Navigate to the project folder:
    ```
    cd heart-disease-checker
    ```
-3. Install dependencies:
+4. Install dependencies:
    ```
    flutter pub get
    ```
-4. Run the app:
+5. Run the app:
    ```
    flutter run
    ```
