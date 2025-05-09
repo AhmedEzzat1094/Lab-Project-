@@ -32,13 +32,6 @@ This Flutter app is designed to help users get a quick risk assessment based on 
 
 ---
 
-## 📷 Screenshots
-
-![App Demo](![Alt Text](![Record_2025-05-08-21-06-18_aeeeeffb1c0cc2b30fd2f6e289ce37ba](https://github.com/user-attachments/assets/933cc76b-fb27-4abb-9422-efc015a1f2b6)
-))
-
----
-
 ## 🛠️ Technologies Used
 
 - **Flutter** (Frontend)  
@@ -110,3 +103,19 @@ And receives a response like:
 ## 🧠 Disclaimer
 
 This app is for **educational purposes only** and should not be used as a substitute for professional medical advice.
+
+
+---
+
+
+## 📷 Screenshots
+
+
+
+
+
+---
+
+![Record_2025-05-08-21-06-18_aeeeeffb1c0cc2b30fd2f6e289ce37ba](https://github.com/user-attachments/assets/182a3550-b7d1-469c-a8fe-4c8e29729af9)
+
+---
