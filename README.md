@@ -34,8 +34,8 @@ This Flutter app is designed to help users get a quick risk assessment based on 
 
 ## 📷 Screenshots
 
-![App Demo](![Record_2025-05-08-21-06-18_aeeeeffb1c0cc2b30fd2f6e289ce37ba](https://github.com/user-attachments/assets/e8b6eb02-5767-4710-9828-9fd98290f685)
-)
+![App Demo](![Alt Text](![Record_2025-05-08-21-06-18_aeeeeffb1c0cc2b30fd2f6e289ce37ba](https://github.com/user-attachments/assets/933cc76b-fb27-4abb-9422-efc015a1f2b6)
+))
 
 ---
 
