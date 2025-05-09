@@ -40,6 +40,19 @@ This Flutter app is designed to help users get a quick risk assessment based on 
 
 ---
 
+## 📷 Screenshots
+
+
+
+
+
+---
+
+![Record_2025-05-08-21-06-18_aeeeeffb1c0cc2b30fd2f6e289ce37ba](https://github.com/user-attachments/assets/182a3550-b7d1-469c-a8fe-4c8e29729af9)
+
+---
+
+
 ## 📦 How to Run the App
 
 1. Clone this repository:
@@ -108,14 +121,3 @@ This app is for **educational purposes only** and should not be used as a substi
 ---
 
 
-## 📷 Screenshots
-
-
-
-
-
----
-
-![Record_2025-05-08-21-06-18_aeeeeffb1c0cc2b30fd2f6e289ce37ba](https://github.com/user-attachments/assets/182a3550-b7d1-469c-a8fe-4c8e29729af9)
-
----
