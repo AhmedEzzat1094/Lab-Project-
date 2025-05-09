@@ -21,7 +21,7 @@ This is a minimal Flask API for predicting the risk of heart disease using a pre
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/AhmedEzzat1094/heart-disease-api.git
+git clone https://github.com/AhmedEzzat1094/Lab-Project-.git
 cd heart-disease-api
 git switch simple-back
 ````
