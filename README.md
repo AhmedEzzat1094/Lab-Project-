@@ -36,7 +36,7 @@ This Flutter app is designed to help users get a quick risk assessment based on 
 
 - **Flutter** (Frontend)  
 - **Dart**  
-- **REST API** for prediction  
+- **REST API** for prediction using DIO package  
 
 ---
 
@@ -65,7 +65,7 @@ This Flutter app is designed to help users get a quick risk assessment based on 
    ```
 3. Navigate to the project folder:
    ```
-   cd heart-disease-checker
+   cd heart_disease_phone_app
    ```
 4. Install dependencies:
    ```
